@@ -16,7 +16,7 @@ namespace StudentManagement.API.Controllers
 
     [Authorize]
     //[Route("api/[controller]")] //for this line class r name change korle route o change hobe which can be a problem
-    [Route("api/VillaAPI")]
+    [Route("api/StudentAPI")]
     //built in support for data annotation in StudentDTOs
     [ApiController]//some of the basic features are included by this like validations in StudetnDTO are effective here 
     public class StudentAPIController : ControllerBase
@@ -185,6 +185,7 @@ namespace StudentManagement.API.Controllers
                 if (updateDTO == null || updateDTO.Id != id)
                 {
                     _response.IsSuccess = false;
+                    _response.ErrorMessages = new List<string> { "Student Id Mismatched" };
                     _response.StatusCode = HttpStatusCode.BadRequest;
                     return BadRequest(_response);
                 }
