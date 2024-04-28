@@ -29,7 +29,7 @@ namespace StudentManagement.Service
             return  _mapper.Map<List<StudentDTO>>(studentList);
         }
       
-        async Task<Student> CreateStudentAsync(StudentCreateDTO createDTO)
+        public async Task<Student> CreateStudentAsync(StudentCreateDTO createDTO)
         {
             try
             {
@@ -66,7 +66,7 @@ namespace StudentManagement.Service
             
             try
             {
-                var student = await _studentRepository.GetAsync(x => x.Id == id);
+                var student = await _studentRepository.GetAsync(x => x.Id == id,false);
                 if (student == null)
                 {
                     return null;

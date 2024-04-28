@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿/*
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -181,7 +182,7 @@ namespace StudentManagement.API.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [HttpPut("{id:int}", Name = "StudentUpdate")]
-        public async Task<ActionResult<APIResponse>> VillaUpdate(int id, StudentUpdateDTO updateDTO)
+        public async Task<ActionResult<APIResponse>> StudentUpdate(int id, StudentUpdateDTO updateDTO)
         {
             try
             {
@@ -215,9 +216,9 @@ namespace StudentManagement.API.Controllers
 
     }
 }
+*/
 
-/*
- * 
+ 
  using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -304,14 +305,14 @@ namespace StudentManagement.API.Controllers
                     _response.StatusCode = HttpStatusCode.BadRequest;
                     return BadRequest(_response);
                 }
-                var student = await _studentService.GetStudentByIdAsync(id);
+                StudentDTO student = await _studentService.GetStudentByIdAsync(id);
                 if (student == null)
                 {
                     _response.IsSuccess = false;
                     _response.StatusCode = HttpStatusCode.NotFound;
                     return NotFound(_response);
                 }
-                
+                _response.Result = student;
                 _response.StatusCode = HttpStatusCode.OK;
                 return Ok(_response);
             }
@@ -412,7 +413,7 @@ namespace StudentManagement.API.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [HttpPut("{id:int}", Name = "StudentUpdate")]
-        public async Task<ActionResult<APIResponse>> VillaUpdate(int id, StudentUpdateDTO updateDTO)
+        public async Task<ActionResult<APIResponse>> StudentUpdate(int id, StudentUpdateDTO updateDTO)
         {
             try
             {
@@ -449,5 +450,4 @@ namespace StudentManagement.API.Controllers
 
 
 
-*/
 
