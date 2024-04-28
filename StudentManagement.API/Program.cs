@@ -7,6 +7,8 @@ using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using StudentManagement.Service;
+using StudentManagement.API.Middleware;
 
 
 namespace StudentManagement.API
@@ -48,8 +50,10 @@ namespace StudentManagement.API
             });
             builder.Services.AddControllers();
             builder.Services.AddScoped<IStudentRepository, StudentRepository>();
+            builder.Services.AddScoped<IStudentService, StudentService>();
             builder.Services.AddAutoMapper(typeof(MappingConfig));
 
+            builder.Services.AddHostedService<BackgroundWorkerService>();
 
             var useInMemoryDatabase = builder.Configuration.GetValue<bool>("UseInMemoryDatabase");
 
@@ -68,6 +72,7 @@ namespace StudentManagement.API
                 });
             }
 
+            builder.Services.AddResponseCaching();
 
             var jwtIssuer = builder.Configuration.GetSection("Jwt:Issuer").Get<string>();
             var jwtKey = builder.Configuration.GetSection("Jwt:Key").Get<string>();
@@ -110,6 +115,8 @@ namespace StudentManagement.API
                 app.UseSwaggerUI();
             }
 
+
+            app.UseRequestHandlerMiddleware();
             app.UseHttpsRedirection();
 
             // Adding CORS middleware
