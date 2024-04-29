@@ -1,6 +1,6 @@
 ﻿using System.Net;
 
-namespace StudentManagement.Persistence.Models
+namespace StudentManagement.API.Response
 {
     public class APIResponse
     {

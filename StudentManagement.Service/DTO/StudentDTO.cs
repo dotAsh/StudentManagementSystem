@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace StudentManagement.Persistence.Models.DTO
+namespace StudentManagement.Service.DTO
 {
     public class StudentDTO
     {

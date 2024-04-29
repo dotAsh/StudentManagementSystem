@@ -1,5 +1,5 @@
 ﻿using StudentManagement.Persistence.Models;
-using StudentManagement.Persistence.Models.DTO;
+using StudentManagement.Service.DTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +13,7 @@ namespace StudentManagement.Service
          Task<List<StudentDTO>> GetAllStudentsAsync(int pageSize, int pageNumber);
          Task<StudentDTO> GetStudentByIdAsync(int id);
 
-         Task<Student> CreateStudentAsync(StudentCreateDTO createDTO);
+         Task<StudentDTO> CreateStudentAsync(StudentCreateDTO createDTO);
          Task<bool> DeleteStudentAsync(StudentDTO studentDTO);
          Task<bool> UpdateStudentAsync(StudentUpdateDTO updateDTO);
     }

@@ -21,6 +21,7 @@ namespace StudentManagement.Persistence.Repository
 
         public async Task CreateAsync(T entity)
         {
+
             await dbset.AddAsync(entity);
             await SaveAsync();
 
