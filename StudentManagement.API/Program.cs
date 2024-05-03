@@ -65,20 +65,9 @@ namespace StudentManagement.API
             var useInMemoryDatabase = builder.Configuration.GetValue<bool>("UseInMemoryDatabase");
             var connectionString = builder.Configuration.GetConnectionString("DefaultSQLConnection");
 
-            //if (useInMemoryDatabase)
-            //{
-            //    builder.Services.AddDbContext<ApplicationDbContext>(options =>
-            //    {
-            //        options.UseInMemoryDatabase("InMemoryDatabaseName");
-            //    });
-            //}
-            //else
-            //{
-            //    builder.Services.AddDbContext<ApplicationDbContext>(options =>
-            //    {
-            //        options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultSQLConnection"));
-            //    });
-            //}
+           
+
+            //To separate the presentation layer from the Data Access layer we register the DI this way
             builder.Services.RegisterDataAccessDependencies(connectionString, useInMemoryDatabase);
 
             builder.Services.AddResponseCaching();
@@ -118,7 +107,7 @@ namespace StudentManagement.API
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment())
+            if (app.Environment.IsDevelopment() || !app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
                 app.UseSwaggerUI();

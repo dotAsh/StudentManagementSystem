@@ -83,6 +83,7 @@ namespace StudentManagement.API.Controllers
                 {
                     _response.IsSuccess = false;
                     _response.StatusCode = HttpStatusCode.NotFound;
+                    _response.ErrorMessages = new List<string> { "Student not found." };
                     return NotFound(_response);
                 }
                 _response.Result = student;
