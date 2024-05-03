@@ -1,8 +1,6 @@
 
 using Microsoft.EntityFrameworkCore;
-using StudentManagement.Persistence.Data;
-using StudentManagement.Persistence.Repository.IRepository;
-using StudentManagement.Persistence.Repository;
+
 using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -11,7 +9,7 @@ using StudentManagement.API.Middleware;
 using StudentManagement.API.Filters;
 using StudentManagement.Service.Services;
 using StudentManagement.Service.Services.IServices;
-
+using StudentManagement.Service;
 
 namespace StudentManagement.API
 {
@@ -58,28 +56,30 @@ namespace StudentManagement.API
 
             builder.Services.AddScoped<CentralizedExceptionFilter>();
             builder.Services.AddScoped<CustomAuthorizationFilter>();
-            builder.Services.AddScoped<IStudentRepository, StudentRepository>();
+           // builder.Services.AddScoped<IStudentRepository, StudentRepository>();
             builder.Services.AddScoped<IStudentService, StudentService>();
             
 
             builder.Services.AddHostedService<BackgroundWorkerService>();
 
             var useInMemoryDatabase = builder.Configuration.GetValue<bool>("UseInMemoryDatabase");
+            var connectionString = builder.Configuration.GetConnectionString("DefaultSQLConnection");
 
-            if (useInMemoryDatabase)
-            {
-                builder.Services.AddDbContext<ApplicationDbContext>(options =>
-                {
-                    options.UseInMemoryDatabase("InMemoryDatabaseName");
-                });
-            }
-            else
-            {
-                builder.Services.AddDbContext<ApplicationDbContext>(options =>
-                {
-                    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultSQLConnection"));
-                });
-            }
+            //if (useInMemoryDatabase)
+            //{
+            //    builder.Services.AddDbContext<ApplicationDbContext>(options =>
+            //    {
+            //        options.UseInMemoryDatabase("InMemoryDatabaseName");
+            //    });
+            //}
+            //else
+            //{
+            //    builder.Services.AddDbContext<ApplicationDbContext>(options =>
+            //    {
+            //        options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultSQLConnection"));
+            //    });
+            //}
+            builder.Services.RegisterDataAccessDependencies(connectionString, useInMemoryDatabase);
 
             builder.Services.AddResponseCaching();
 
