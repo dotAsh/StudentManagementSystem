@@ -1,6 +1,4 @@
 ﻿
- 
-
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using StudentManagement.Service.DTO;
@@ -10,32 +8,22 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
 using System.Net;
-using StudentManagement.Service;
 using StudentManagement.API.Response;
+using StudentManagement.API.Filters;
+using System.Globalization;
+using StudentManagement.Service.Services.IServices;
+
 
 namespace StudentManagement.API.Controllers
 {
 
     [Authorize]
-    //[Route("api/[controller]")] //for this line class r name change korle route o change hobe which can be a problem
+    [ServiceFilter(typeof(CustomAuthorizationFilter))]
     [Route("api/StudentAPI")]
-    //built in support for data annotation in StudentDTOs
-    [ApiController]//some of the basic features are included by this like validations in StudetnDTO are effective here 
+    [ApiController]
     public class StudentAPIController : ControllerBase
     {
-        //protected APIResponse _response;
-        //private readonly IStudentRepository _dbStudent;
-        //private readonly IMapper _mapper;
-        //private readonly ILogger<StudentAPIController> _logger;
-        //public StudentAPIController(IStudentRepository dbStudent, IMapper mapper, ILogger<StudentAPIController> logger)
-        //{
-        //    _dbStudent = dbStudent;
-        //    _mapper = mapper;
-        //    _response = new();
-        //    _logger = logger;
-        //}
-
-
+        
         private readonly IStudentService _studentService;
         private readonly ILogger<StudentAPIController> _logger;
         protected APIResponse _response;
@@ -49,12 +37,15 @@ namespace StudentManagement.API.Controllers
         [ResponseCache(Duration = 30)]
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<APIResponse>> GetStudents(int pageSize= 3,int  pageNumber = 1)
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+
+        public async Task<ActionResult<APIResponse>> GetStudents(int pageSize= 10,int  pageNumber = 1,string filterBy = null, string sortBy = "Name")
         {
             try
             {
 
-                IEnumerable<StudentDTO> studentDTOList = await _studentService.GetAllStudentsAsync(pageSize, pageNumber);
+                IEnumerable<StudentDTO> studentDTOList = await _studentService.GetAllStudentsAsync( filterBy:filterBy,  sortBy:sortBy,pageSize:pageSize, pageNumber:pageNumber);
+                
                 _response.Result = studentDTOList;
                 _response.StatusCode = HttpStatusCode.OK;
                 _logger.LogInformation("getting all students");
@@ -74,6 +65,8 @@ namespace StudentManagement.API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+
         public async Task<ActionResult<APIResponse>> GetStudent(int id)
         {
             try
@@ -110,12 +103,13 @@ namespace StudentManagement.API.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+
         public async Task<ActionResult<APIResponse>> CreateStudent([FromBody] StudentCreateDTO createDTO)
         {
             try
             {
-                //class r uper [ApiController] attribute na add korle ai if lagbe
-                //custom validation r jonno o lagbe
+        
                 if (!ModelState.IsValid)
                 {
                     _response.IsSuccess = false;
@@ -132,14 +126,11 @@ namespace StudentManagement.API.Controllers
                     return BadRequest(createDTO);
                 }
 
-                //Student student = _mapper.Map<Student>(createDTO);
-
-
-                //await _dbStudent.CreateAsync(student);
+           
                 StudentDTO student = await _studentService.CreateStudentAsync(createDTO); 
                 _response.Result = student;
                 _response.StatusCode = HttpStatusCode.Created;
-                //id will be populated auto
+                //id will be auto populated 
                 return CreatedAtRoute("GetStudent", new { id = student.Id }, _response);
             }
             catch (Exception ex)
@@ -155,6 +146,8 @@ namespace StudentManagement.API.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+
         [HttpDelete("{id:int}", Name = "DeleteStudent")]
         public async Task<ActionResult<APIResponse>> DeleteStudent(int id)
         {
@@ -174,6 +167,7 @@ namespace StudentManagement.API.Controllers
                 {
                     _response.IsSuccess = false;
                     _response.StatusCode = HttpStatusCode.NotFound;
+                    _response.ErrorMessages = new List<string> { "Student not found for deletion." };
                     return NotFound(_response);
 
                 }
@@ -192,6 +186,9 @@ namespace StudentManagement.API.Controllers
         }
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+
         [HttpPut("{id:int}", Name = "StudentUpdate")]
         public async Task<ActionResult<APIResponse>> StudentUpdate(int id, StudentUpdateDTO updateDTO)
         {
@@ -204,7 +201,16 @@ namespace StudentManagement.API.Controllers
                     _response.StatusCode = HttpStatusCode.BadRequest;
                     return BadRequest(_response);
                 }
-               
+                StudentDTO student = await _studentService.GetStudentByIdAsync(id);
+                if (student == null)
+                {
+                    _response.IsSuccess = false;
+                    _response.StatusCode = HttpStatusCode.NotFound;
+                    _response.ErrorMessages = new List<string> { "Student not found for update." };
+                    return NotFound(_response);
+
+                }
+
 
 
                 await _studentService.UpdateStudentAsync(updateDTO);

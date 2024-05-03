@@ -7,8 +7,10 @@ using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using StudentManagement.Service;
 using StudentManagement.API.Middleware;
+using StudentManagement.API.Filters;
+using StudentManagement.Service.Services;
+using StudentManagement.Service.Services.IServices;
 
 
 namespace StudentManagement.API
@@ -19,7 +21,7 @@ namespace StudentManagement.API
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
+            
             builder.Services.AddSwaggerGen(opt =>
             {
                 opt.SwaggerDoc("v1", new OpenApiInfo { Title = "MyAPI", Version = "v1" });
@@ -48,10 +50,17 @@ namespace StudentManagement.API
                     }
                 });
             });
-            builder.Services.AddControllers();
+            //builder.Services.AddControllers();
+            builder.Services.AddControllers(options =>
+            {
+                options.Filters.Add(typeof(CentralizedExceptionFilter));
+            });
+
+            builder.Services.AddScoped<CentralizedExceptionFilter>();
+            builder.Services.AddScoped<CustomAuthorizationFilter>();
             builder.Services.AddScoped<IStudentRepository, StudentRepository>();
             builder.Services.AddScoped<IStudentService, StudentService>();
-            builder.Services.AddAutoMapper(typeof(MappingConfig));
+            
 
             builder.Services.AddHostedService<BackgroundWorkerService>();
 

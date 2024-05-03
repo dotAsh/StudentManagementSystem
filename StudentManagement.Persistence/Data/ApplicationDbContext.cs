@@ -46,6 +46,7 @@ namespace StudentManagement.Persistence.Data
                      UpdatedDate = DateTimeOffset.UtcNow
                  }
 
+
               );
 
         }

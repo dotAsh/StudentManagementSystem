@@ -31,6 +31,10 @@ namespace StudentManagement.Persistence.Repository
         {
 
             IQueryable<T> query = dbset;
+            if (filter != null)
+            {
+                query = query.Where(filter);
+            }
             if (pageSize > 0)
             {
                 if (pageSize > 100)
@@ -40,12 +44,8 @@ namespace StudentManagement.Persistence.Repository
                 query = query.Skip(pageSize * (pageNumber - 1)).Take(pageSize);
 
             }
-            
-            if (filter != null)
-            {
-                query = query.Where(filter);
-            }
-            
+           
+
             //the query hasn't been executed against the database yet. It's just a query definition.
             return await query.ToListAsync(); //Deferred execution  occurs here 
         }

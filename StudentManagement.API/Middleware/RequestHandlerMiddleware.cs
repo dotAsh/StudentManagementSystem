@@ -17,18 +17,30 @@ namespace StudentManagement.API.Middleware
 
         public async Task InvokeAsync(HttpContext context)
         {
-            _logger.LogInformation("SampleCustomMiddlewre is called***");
+            _logger.LogInformation("***SampleCustomMiddlewre is called***");
             _logger.LogInformation("Request Logging : " + context.Request.Method + " " + context.Request.Path + context.Request.QueryString);
 
             try
             {
-
+               
                 await _next(context);
 
-                if (context.Response.StatusCode >= 400)
+                var statusCode = context.Response.StatusCode;
+                if (statusCode >= 500)
                 {
-                    _logger.LogError($"**********An error occured during the request processing! Status Code: {context.Response.StatusCode}");
-
+                    _logger.LogError($"Server error occurred! Status Code: {statusCode}");
+                }
+                else if (statusCode >= 400)
+                {
+                    _logger.LogWarning($"Client error occurred! Status Code: {statusCode}");
+                }
+                else if (statusCode >= 300)
+                {
+                    _logger.LogInformation($"Redirection! Status Code: {statusCode}");
+                }
+                else
+                {
+                    _logger.LogInformation($"Success! Status Code: {statusCode}");
                 }
 
             }
