@@ -32,6 +32,7 @@ namespace StudentManagement.API.Middleware
                 }
                 else if (statusCode >= 400)
                 {
+                    
                     _logger.LogWarning($"Client error occurred! Status Code: {statusCode}");
                 }
                 else if (statusCode >= 300)

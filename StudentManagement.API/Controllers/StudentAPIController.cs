@@ -17,8 +17,9 @@ using StudentManagement.Service.Services.IServices;
 namespace StudentManagement.API.Controllers
 {
 
-    [Authorize]
+    
     [ServiceFilter(typeof(CustomAuthorizationFilter))]
+    [Authorize]
     [Route("api/StudentAPI")]
     [ApiController]
     public class StudentAPIController : ControllerBase
