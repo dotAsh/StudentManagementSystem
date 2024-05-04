@@ -3,7 +3,7 @@ using StudentManagement.Persistence.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 using StudentManagement.Persistence.Repository.IRepository;
-
+//Developed by Md. Ashik
 namespace StudentManagement.Persistence.Repository
 {
     public class Repository<T> : IRepository<T> where T : class

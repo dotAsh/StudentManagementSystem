@@ -1,4 +1,4 @@
-﻿
+﻿//Developed by Md. Ashik
 using StudentManagement.Persistence.Models;
 using StudentManagement.Service.DTO;
 using StudentManagement.Persistence.Repository.IRepository;
@@ -13,7 +13,7 @@ using StudentManagement.Service.Mappers;
 using System.Globalization;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using StudentManagement.Service.Services.IServices;
-
+//Developed by Md. Ashik
 namespace StudentManagement.Service.Services
 {
     public class StudentService : IStudentService

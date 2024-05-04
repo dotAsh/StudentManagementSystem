@@ -1,4 +1,4 @@
-﻿
+﻿//Developed by Md. Ashik
 using System.Linq.Expressions;
 
 namespace StudentManagement.Persistence.Repository.IRepository
